@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>老生常谈——图解3种跨域解决方案</title>
+    <url>/2017/10/21/2017-10-21-%E8%80%81%E7%94%9F%E5%B8%B8%E8%B0%88%E2%80%94%E2%80%94%E5%9B%BE%E8%A7%A33%E7%A7%8D%E8%B7%A8%E5%9F%9F%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</url>
+    <content><![CDATA[<p><img src="http://upload-images.jianshu.io/upload_images/4101261-aa65df33fb38d320?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<blockquote>
+<p>没有纯前端的跨域解决方案，遇到跨域，请找后端协商方案！</p>
+</blockquote>
+<h2 id="什么是跨域？"><a href="#什么是跨域？" class="headerlink" title="什么是跨域？"></a>什么是跨域？</h2><blockquote>
+<p>同源策略限制从一个源加载的文档或脚本如何与来自另一个源的资源进行交互。这是一个用于隔离潜在恶意文件的关键的安全机制。 ——MDN</p>
+</blockquote>
+<p>跨域的产生来源于浏览器的同源策略。当你访问（请求）的资源和当前页的协议、域名、端口中有一个不同时，就会遇到跨域问题。</p>
+<p>常见的解决方案有以下 3 种。</p>
+<h3 id="1-jsonp"><a href="#1-jsonp" class="headerlink" title="1. jsonp"></a>1. jsonp</h3><blockquote>
+<p><strong>jsonp</strong> 和 <strong>XMLHttpRequest</strong> 完全没有关系。</p>
+</blockquote>
+<p>html 中的某些标签具有访问跨域资源的特性。例如，我们通过使用 <code>script</code> 标签向其他服务器请求数据，这种技术我们称为 jsonp。</p>
+<p>具体行为：创建一个 <code>script</code> 标签，给 <code>src</code> 赋值请求的 url，并添加到 <code>document</code> 中去，然后浏览器就会发送一个 <code>GET</code> 的 <strong>HTTP</strong> 请求以下载 <code>src</code> 属性所指向的 <strong>URL</strong> 。</p>
+<p>示意图:</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4101261-90c56c0ac31b8b17?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>具体代码就不贴了，如果请求超时了，会触发 <code>script</code> 标签的 <code>onerror</code> 事件，类似</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">a = new Image();</span><br><span class="line">a.src = &quot;http://www.baidu.com&quot;;</span><br><span class="line">a.onerror = function()&#123;</span><br><span class="line">    console.log(&apos;load failed&apos;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>图片资源请求失败会触发它的 <code>onerror</code>事件。</p>
+<h3 id="2-cors-跨域资源共享"><a href="#2-cors-跨域资源共享" class="headerlink" title="2. cors 跨域资源共享"></a>2. cors 跨域资源共享</h3><p>这是后端来处理的，前端不需要了解太多。主要是通过设置 <code>responseHeader</code> 的 <code>Access-Control-Allow-Origin</code> 字段</p>
+<p>这里可以参考 <a href="&quot;http://www.ruanyifeng.com/blog/2016/04/cors.html&quot;">“跨域资源共享 CORS 详解——阮一峰”</a> 。 里面讲的蛮好的, 包括什么是简单请求，什么是非简单请求，什么情况下，浏览器会先尝试发起 <code>options</code> 请求。</p>
+<p>示意图:</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4101261-ef6da3f428fdccd6?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="CORS"></p>
+<h3 id="3-代理"><a href="#3-代理" class="headerlink" title="3. 代理"></a>3. 代理</h3><p>我这里说的代理是指 中间层代理 和 nginx 反向代理。</p>
+<p>在我的理解里, 这两个东西其实差不多，因为是服务端来处理，而服务端是没有跨域问题的。</p>
+<p>举个例子，我用一个 node 服务来做中间转发层。我在 <code>www.ccc.com/a.html</code> 中向同源的 <code>www.ccc.com/api/v1/getUserAge?id=106</code> 发起请求，node 服务接收到这个请求后，在 node 服务端向另外一个服务器比如 <code>www.aaa.com/api/v1/getUserAge?id=106</code> 发起请求，等它返回结果后，再将请求结果返回给 <code>www.ccc.com/a.html</code>。</p>
+<p>示意图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4101261-f32d0f525d744849?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="node转发"></p>
+<p>nginx 我没怎么用过，但应该也差不多，有个对外和对内的请求的拦截器之类的东西，在里面设置转发。</p>
+<p>就写到这里，如果有那里理解的不对，还请指正，谢谢 🙏 : )</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>强大的node进程管理器——PM2</title>
+    <url>/2017/03/08/2017-03-08-%E5%BC%BA%E5%A4%A7%E7%9A%84node%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86%E5%99%A8%E2%80%94%E2%80%94PM2/</url>
+    <content><![CDATA[<blockquote>
+<p>最近，我在搭建个人博客的时候，才注意到 node 的进程管理器原来除了 forever，还有个 pm2，看了下<a href="http://pm2.keymetrics.io/docs/usage/cluster-mode/" target="_blank" rel="noopener">官方文档</a>，确实不错！</p>
+</blockquote>
+<h3 id="运行模式"><a href="#运行模式" class="headerlink" title="运行模式"></a>运行模式</h3><ol>
+<li>fork_mode</li>
+<li>cluster_mode<br><code>pm2 start app.js</code> 默认开启的是 fork 模式，<code>pm2 start app.js -i max</code> 是开启 cluster 模式（集群模式）。cluster 模式的好处，请自行百度。</li>
+</ol>
+<h3 id="pm2-可以通过配置文件启动-1-个或多个-node-应用"><a href="#pm2-可以通过配置文件启动-1-个或多个-node-应用" class="headerlink" title="pm2 可以通过配置文件启动 1 个或多个 node 应用"></a>pm2 可以通过配置文件启动 1 个或多个 node 应用</h3><figure class="highlight"><table><tr><td class="code"><pre><span class="line"><span class="comment">// process.json(也可以yml等配置文件)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">"apps"</span> : [&#123;</span><br><span class="line">    <span class="attr">"name"</span>      : <span class="string">"myblog"</span>,</span><br><span class="line">    <span class="attr">"script"</span>    : <span class="string">"app.js"</span>,</span><br><span class="line">    <span class="attr">"instances"</span> : <span class="number">2</span>, <span class="comment">//利用2个核心</span></span><br><span class="line">    <span class="attr">"exec_mode"</span> : <span class="string">"cluster"</span></span><br><span class="line">  &#125;,&#123;</span><br><span class="line">    <span class="attr">"name"</span>      : <span class="string">"myblog-test"</span>,</span><br><span class="line">    <span class="attr">"script"</span>    : <span class="string">"app.js"</span>,</span><br><span class="line">    <span class="attr">"instances"</span> : <span class="string">"max"</span>,</span><br><span class="line">    <span class="attr">"exec_mode"</span> : <span class="string">"cluster"</span>,</span><br><span class="line">    <span class="attr">"watch"</span>     : <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">"env"</span>: &#123;</span><br><span class="line">      <span class="attr">"NODE_ENV"</span>: <span class="string">"development"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"env_production"</span> : &#123;</span><br><span class="line">       <span class="attr">"NODE_ENV"</span>: <span class="string">"production"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"interpreter"</span>   : <span class="string">"/usr/bin/node"</span>,</span><br><span class="line">    <span class="attr">"interpreter_args"</span>  :  <span class="string">"--harmony"</span>,</span><br><span class="line">    <span class="attr">"node_args"</span>   : <span class="string">"--harmony"</span>,</span><br><span class="line">    <span class="attr">"log_date_format"</span>   : <span class="string">"YYYY-MM-DD HH:mm Z"</span>,</span><br><span class="line">    <span class="attr">"error_file"</span>        :  <span class="string">"/web/klhut/www/logs/err.log"</span>,</span><br><span class="line">    <span class="attr">"out_file"</span>          :  <span class="string">"/web/klhut/www/logs/out.log"</span>,</span><br><span class="line">    <span class="attr">"pid_file"</span>          : <span class="string">"/web/klhut/www/logs/app-id.pid"</span></span><br><span class="line">  &#125;]</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 启动应用</span></span><br><span class="line">pm2 start process.json</span><br></pre></td></tr></table></figure>
+<p>由于我还使用了 nvm 管理 node 版本，所以我在项目目录下创建了个.nvmrc 文件</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">touch .nvmrc</span><br><span class="line">echo 7 &gt; .nvmrc</span><br></pre></td></tr></table></figure>
+<p>并在 package.json 里写了几个命令</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="comment">// package.json</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">"scripts"</span>: &#123;</span><br><span class="line">    <span class="attr">"start"</span>: <span class="string">"shell=(nvm use 7 ) &amp;&amp; pm2 start ./process.json"</span>,</span><br><span class="line">    <span class="attr">"restart"</span>: <span class="string">"pm2 restart ./process.json"</span>,</span><br><span class="line">    <span class="attr">"stop"</span>: <span class="string">"pm2 stop ./process.json"</span>,</span><br><span class="line">    <span class="attr">"delete"</span>: <span class="string">"npm run stop &amp;&amp; pm2 delete ./process.json"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>pm2 还可以设置开机自启动</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pm2 save</span><br><span class="line">pm2 startup centos       //我的服务器是centos 7.x的，具体看文档</span><br></pre></td></tr></table></figure>
+<p>暂时就到这里：P</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>Linux（Centos 7.x）下安装nginx</title>
+    <url>/2017/01/23/2020-03-08-Linux%EF%BC%88Centos-7-x%EF%BC%89%E4%B8%8B%E5%AE%89%E8%A3%85nginx/</url>
+    <content><![CDATA[<h2 id="下载源码包安装-nginx"><a href="#下载源码包安装-nginx" class="headerlink" title="下载源码包安装 nginx"></a>下载源码包安装 nginx</h2><ul>
+<li>1 cd /usr/local/src</li>
+<li>2 wget <a href="http://nginx.org/download/nginx-1.10.2.tar.gz" target="_blank" rel="noopener">http://nginx.org/download/nginx-1.10.2.tar.gz</a></li>
+<li>3 tar -xzvf nginx-1.10.2.tar.gz</li>
+<li>4 cd nginx-1.10.2</li>
+<li>5 ./configure –with-file-aio –with-ipv6 –with-http_ssl_module –with-http_stub_status_module –with-http_sub_module –with-http_realip_module –with-http_dav_module –with-http_gzip_static_module –with-mail –with-mail_ssl_module –with-debug</li>
+<li>6 make &amp;&amp; make install</li>
+</ul>
+<p>默认 nginx 命令在<code>/usr/local/nginx/sbin/nginx</code>没添加到环境变量<br>可添加软连接<code>ln -s /usr/local/nginx/sbin/nginx /usr/local/bin/nginx</code></p>
+<h2 id="为-nginx-添加开机自启动服务"><a href="#为-nginx-添加开机自启动服务" class="headerlink" title="为 nginx 添加开机自启动服务"></a>为 nginx 添加开机自启动服务</h2><ul>
+<li>1 nginx -c /usr/local/nginx/conf/nginx.conf （启动 nginx）</li>
+<li>2 touch /lib/systemd/system/nginx.service (创建系统自启服务文件)</li>
+<li>3 cd /lib/systemd/system</li>
+<li>4 chmod 754 nginx.service (更改为 754 权限)</li>
+<li>5 vi nginx.service(编辑服务文件)</li>
+</ul>
+<hr>
+<p>（将以下内容写入文件内）<br>[Unit]<br>Description=nginx.service<br>After=network.target</p>
+<p>[Service]<br>Type=forking<br>PIDFile=/usr/local/nginx/logs/nginx.pid<br>ExecStart=/usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf<br>ExecReload=/usr/local/nginx/sbin/nginx -s reload<br>ExecStop=/usr/local/nginx/sbin/nginx -s stop<br>PrivateTmp=true</p>
+<p>[Install]<br>WantedBy=multi-user.target</p>
+<hr>
+<blockquote>
+<ul>
+<li>6 systemctl enable nginx.service</li>
+</ul>
+</blockquote>
+<ul>
+<li>7 pkill -9 nginx （关闭 nginx 进程）</li>
+<li>8 systemctl start nginx.service (启动 nginx 服务)</li>
+</ul>
+<p><strong>直接访问 ip，如果出现以下页面说明成功了!</strong><br><img src="http://upload-images.jianshu.io/upload_images/4101261-387f8aaf318d7464.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="nginx"></p>
+]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>assert-2020.01.01</title>
+    <url>/2020/01/01/2020-01-01-Node%20assert/</url>
+    <content><![CDATA[<h2 id="assert-断言"><a href="#assert-断言" class="headerlink" title="assert 断言"></a>assert 断言</h2><p><code>assert</code> 模块提供了一组简单的断言测试，可用于测试不变量。 该模块提供了建议的 <strong><em>严格模式</em></strong> 和更宽松的 <strong><em>遗留模式</em></strong>。</p>
+<h2 id="assert-AssertionError-类"><a href="#assert-AssertionError-类" class="headerlink" title="assert.AssertionError 类"></a>assert.AssertionError 类</h2><p><code>Error</code> 的子类，表明断言的失败。 <code>assert</code> 模块抛出的所有错误都将是 <code>AssertionError</code> 类的实例。</p>
+<h2 id="new-assert-AssertionError-options"><a href="#new-assert-AssertionError-options" class="headerlink" title="new assert.AssertionError(options)"></a>new assert.AssertionError(options)</h2><ul>
+<li>options <code>&lt;Object&gt;</code><ul>
+<li>message <code>&lt;string&gt;</code> 如果提供，则将错误消息设置为此值。</li>
+<li>actual <code>&lt;any&gt;</code> 错误实例上的 <code>actual</code> 属性将包含此值。</li>
+<li>expected <code>&lt;any&gt;</code> 错误实例上的 <code>expected</code> 属性将包含此值。</li>
+<li>operator <code>&lt;string&gt;</code> 错误实例上的 <code>operator</code> 属性将包含此值。</li>
+<li>stackStartFn <code>&lt;Function&gt;</code> 如果提供，则生成的堆栈跟踪将移除所有帧直到提供的函数。</li>
+</ul>
+</li>
+</ul>
+<p>所有实例都包含内置的 <code>Error</code> 属性（<code>message</code> 和 <code>name</code>）以及：</p>
+<ul>
+<li>actual <code>&lt;any&gt;</code> 设置方法的 actual 参数，例如 <code>assert.strictEqual()</code>。</li>
+<li>expected <code>&lt;any&gt;</code> 设置方法的 expected 参数，例如 <code>assert.strictEqual()</code>。</li>
+<li>generatedMessage <code>&lt;boolean&gt;</code> 表明消息是否是自动生成的。</li>
+<li>code <code>&lt;string&gt;</code> 始终设置为字符串 <strong>ERR_ASSERTION</strong> 以表明错误实际上是断言错误。</li>
+<li>operator <code>&lt;string&gt;</code> 设置为传入的运算符值。</li>
+</ul>
+<h2 id="strict-严格模式"><a href="#strict-严格模式" class="headerlink" title="strict 严格模式"></a>strict 严格模式</h2><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> assert = <span class="built_in">require</span>(<span class="string">"assert"</span>).strict;</span><br></pre></td></tr></table></figure>
+<h2 id="legacy-遗留模式"><a href="#legacy-遗留模式" class="headerlink" title="legacy 遗留模式"></a>legacy 遗留模式</h2><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> assert = <span class="built_in">require</span>(<span class="string">"assert"</span>);</span><br></pre></td></tr></table></figure>
+<p>尽量使用 <strong><em>严格模式</em></strong>，<strong><em>遗留模式</em></strong>的 <strong>抽象的相等性比较</strong> 可能会有意外结果。<br>eg：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 注意：这不会抛出 AssertionError！</span></span><br><span class="line">assert.deepEqual(<span class="regexp">/a/gi</span>, <span class="keyword">new</span> <span class="built_in">Date</span>());</span><br></pre></td></tr></table></figure>
+<h2 id="assert-value-message"><a href="#assert-value-message" class="headerlink" title="assert(value[, message])"></a>assert(value[, message])</h2><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">assert(<span class="literal">false</span>, <span class="string">"结果为假"</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="assert-deepStrictEqual-actual-expected-message"><a href="#assert-deepStrictEqual-actual-expected-message" class="headerlink" title="assert.deepStrictEqual(actual, expected[, message])"></a>assert.deepStrictEqual(actual, expected[, message])</h2><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">assert.deepStrictEqual(<span class="number">1</span>, <span class="number">2</span>, <span class="string">"1和2不相等"</span>);</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>node</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>从浏览器输入url开始发生了什么</title>
+    <url>/2021/05/20/2020-06-08-%E4%BB%8E%E6%B5%8F%E8%A7%88%E5%99%A8%E8%BE%93%E5%85%A5url%E5%BC%80%E5%A7%8B%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88/</url>
+    <content><![CDATA[<ol>
+<li>首先会触发当前页面的beforeunload事件（在这里需要的话可以使用navigator.sendBeacon()发送数据）</li>
+<li>先看本地是否缓存资源，如果缓存存在且没有过期，直接返回资源，没有则进入网络请求阶段。</li>
+<li>检查dns缓存，先从浏览器-&gt; 本机 -&gt; 本地dns服务器 -&gt; 根域服务器（顶级域服务器、以及其子域名服务器）</li>
+<li>确定了ip地址后，开始tcp的三次握手。如果是https请求，还需要建立tls连接。</li>
+<li>发起请求，强缓存和协商缓存，强缓存判断本地未过期，直接使用本地资源（cache-control expires）。协商缓存(etag/if-no-match, last-modified/if-modified-since)，向服务器端确认缓存是否过期，过期则使用新的资源。</li>
+<li>Tcp四次挥手</li>
+<li>html字节流，分词器转成html标签，构建dom，构建cssom，计算，合成布局树，布局计算，为特殊的节点分层，生成分层树，开始绘制。</li>
+<li>拆分绘制指令，生成绘制列表，交给合成线程，合成线程会图层分块，交给gpu做光栅化生成位图，结束后交给合成线程，合成图层，最后交给主线程渲染页面。</li>
+<li>渲染进程通知浏览器进程，完成整个导航。</li>
+</ol>
+]]></content>
+  </entry>
+</search>
